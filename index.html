@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacts Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f5f5;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #e91e63;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            margin-right: 10px;
+        }
+
+        .header-text {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-text i {
+            margin-left: 5px;
+        }
+
+        .header-right .header-text {
+            cursor: pointer;
+        }
+
+        .header-right .header-text:hover {
+            color: #ff4081; /* Pink color on hover */
+        }
+
+        .container {
+            max-width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .add-button {
+            background-color: #e91e63;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-button i {
+            margin-left: 5px;
+        }
+
+        .add-button:hover {
+            background-color: #ad1457; /* Darker pink color on hover */
+        }
+
+        #search-input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #bdbdbd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        #search-input:focus {
+            border-color: #e91e63;
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        th {
+            background-color: #e91e63;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fce4ec; /* Light pink background */
+        }
+
+        .edit-button, .delete-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .edit-button {
+            color: #ff4081; /* Pink color */
+        }
+
+        .edit-button:hover {
+            color: #d81b60; /* Darker pink color on hover */
+        }
+
+        .delete-button {
+            color: #f44336; /* Red color */
+        }
+
+        .delete-button:hover {
+            color: #d32f2f; /* Darker red color on hover */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 40%;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #bdbdbd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #e91e63;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #e91e63;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ad1457; /* Darker pink color on hover */
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <h1 class="header-text">إدارة جهات الاتصال</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-text" onclick="showAddContactForm()">
+                    <i class="fas fa-plus-circle header-icon"></i>
+                    <span>إضافة جهة اتصال جديدة</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <input type="text" id="search-input" placeholder="ابحث عن جهة اتصال...">
+        </div>
+        <table id="contact-list">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>المنظمة</th>
+                    <th>المدينة</th>
+                    <th>الهاتف</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>العمليات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Contact list will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="contact-form-container" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="hideAddContactForm()">&times;</span>
+            <form id="contact-form" onsubmit="addContact(event)">
+                <label for="name">الاسم</label>
+                <input type="text" id="name" required>
+                <label for="organization">المنظمة</label>
+                <input type="text" id="organization" required>
+                <label for="city">المدينة</label>
+                <input type="text" id="city" required>
+                <label for="phone">الهاتف</label>
+                <input type="tel" id="phone" required>
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" required>
+                <button type="submit">إضافة جهة الاتصال</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Font Awesome CDN for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <script>
+        let contacts = [];
+
+        function showAddContactForm() {
+            document.getElementById('contact-form-container').style.display = 'flex';
+        }
+
+        function hideAddContactForm() {
+            document.getElementById('contact-form-container').style.display = 'none';
+        }
+
+        function addContact(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const organization = document.getElementById('organization').value;
+            const city = document.getElementById('city').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            const contact = { name, organization, city, phone, email };
+            contacts.push(contact);
+            updateContactList();
+            hideAddContactForm();
+            document.getElementById('contact-form').reset();
+        }
+
+        function editContact(index) {
+            const contact = contacts[index];
+            document.getElementById('name').value = contact.name;
+            document.getElementById('organization').value = contact.organization;
+            document.getElementById('city').value = contact.city;
+            document.getElementById('phone').value = contact.phone;
+            document.getElementById('email').value = contact.email;
+
+            // Remove the contact from the list temporarily
+            contacts.splice(index, 1);
+
+            showAddContactForm();
+        }
+
+        function deleteContact(index) {
+            contacts.splice(index, 1);
+            updateContactList();
+        }
+
+        function updateContactList(filteredContacts = contacts) {
+            const contactList = document.querySelector('#contact-list tbody');
+            contactList.innerHTML = '';
+
+            filteredContacts.forEach((contact, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${contact.name}</td>
+                    <td>${contact.organization}</td>
+                    <td>${contact.city}</td>
+                    <td>${contact.phone}</td>
+                    <td>${contact.email}</td>
+                    <td>
+                        <button class="edit-button" onclick="editContact(${index})"><i class="fas fa-edit"></i></button>
+                        <button class="delete-button" onclick="deleteContact(${index})"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                contactList.appendChild(row);
+            });
+        }
+
+        function searchContacts() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredContacts = contacts.filter(contact => 
+                contact.name.toLowerCase().includes(searchInput) ||
+                contact.organization.toLowerCase().includes(searchInput) ||
+                contact.city.toLowerCase().includes(searchInput) ||
+                contact.phone.includes(searchInput) ||
+                contact.email.toLowerCase().includes(searchInput)
+            );
+            updateContactList(filteredContacts);
+        }
+
+        // Initialize with a few contacts (optional)
+        contacts = [
+            { name: 'علي', organization: 'شركة ABC', city: 'الرياض', phone: '0551234567', email: 'ali@example.com' },
+            { name: 'سارة', organization: 'شركة XYZ', city: 'جدة', phone: '0557654321', email: 'sarah@example.com' }
+        ];
+        updateContactList();
+    </script>
+</body>
+</html>
